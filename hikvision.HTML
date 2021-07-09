@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head> 
+<meta charset="utf-8"> 
+<title>菜鸟教程(runoob.com)</title> 
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        font-size: 100%;
+     }
+    #btn{
+        background-color: #fff;
+        border:rgb(61,61,61) 1px solid;
+        color : rgb(61,61,61);
+        padding:5px;
+        margin-top: 5px;
+        margin-left: 5px;
+    }
+    #btn:hover{
+        background-color: rgb(61,61,61);
+        color: white;
+        padding:5px;
+    }
+    iframe{
+        background-color: rgb(61,61,61);
+        margin-left: 4px;
+    }
+</style>
+</head>
+<body>
+    <button id="btn">点击开始播放监控数据</button>
+    <div>
+        <iframe
+        src=""
+        id="vid"
+        width="600"
+        height="400"
+        id="ysopen"
+        allowfullscreen
+        >
+        </iframe>
+    </div>  
+<script>
+    
+    var src_new;
+    var xhr = new XMLHttpRequest();
+    var src_addr_fontPart = "https://open.ys7.com/ezopen/h5/iframe_se?url=ezopen://SAKUIV@open.ys7.com/D28383194/1.live&autoplay=1&audio=1&accessToken="
+    var src_addr_backPart = "&templete=2";
+    btn.addEventListener('click',ReChangeIframeSrc);
+
+    //更改iframe 的src
+    function ReChangeIframeSrc()
+    {
+        //检查Cookie中是否之前存储了 src,若没有，则将它存入Cookie
+        if(!checkCookie())
+        {
+            // 发送异步 GET 请求
+            xhr.open("POST", "https://open.ys7.com/api/lapp/token/get/?appKey=6532364baea54d15abaa927450f68172&appSecret=b043a0082a7f73176f66e185ef99347c", false);
+            xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            xhr.send();
+            src_new = getNewSrc();
+            setCookie('iframe_src',src_new ,6);
+            console.log("测试1")
+        }
+        else
+        {
+            src_new = getCookie('iframe_src');
+            console.log("测试2")
+        }
+        document.getElementById('vid').src = src_new;
+    }
+
+    function setCookie(cname,cvalue,exdays)
+    {
+        var d = new Date();
+        d.setTime(d.getTime()+(6*24*60*60*1000));
+        var expires = "expires="+d.toGMTString();
+        document.cookie = cname + "=" + cvalue + "; " + expires;
+    }
+
+    function getCookie(cname)
+    {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i<ca.length; i++) 
+        {
+            var c = ca[i].trim();
+            if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+        }
+        return "";
+    }
+
+    function checkCookie()
+    {
+        var iframe_src=getCookie("iframe_src");
+        if (iframe_src != "")
+        {
+            return true;
+        }
+        else 
+        {
+           return false;
+        }
+    }
+
+    function getNewSrc() {
+        //从http中获得的内容
+        var content = xhr.responseText;
+        //获得的内容是JSON格式，解析成对象
+        var obj_content = JSON.parse(content);
+        //拼接成新的src
+        src_new = src_addr_fontPart + obj_content.data.accessToken  + src_addr_backPart ;
+        return src_new;
+    }
+
+    xhr.onerror = function () {
+        console.log("请求出错")
+    }
+    
+</script>
+</body>
+</html>
