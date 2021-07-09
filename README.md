@@ -1,0 +1,2 @@
+# hikvision
+借助于海康威视摄像头，将accessToken从海康威视后台的accessToken获取，并存在本地Cookie中，解决了不需要经常更改accessToke问题
